@@ -1,0 +1,9 @@
+server:
+  appName: go_web_test
+  port: 8888
+
+db:
+  dsn: "root:mabang3.0@(192.168.2.44:3306)/swoole?charset=utf8mb4&parseTime=True&loc=Local"
+  maxIdleConns: 200
+  maxOpenConns: 1000
+  connMaxLifetime: 60
