@@ -6,7 +6,9 @@ import (
 	"mabang-arch-demo-go/common/config/cache"
 	"mabang-arch-demo-go/common/config/db"
 	"mabang-arch-demo-go/common/config/gin"
+	"mabang-arch-demo-go/common/config/http"
 	"mabang-arch-demo-go/common/config/log"
+	"mabang-arch-demo-go/common/config/redis"
 	"mabang-arch-demo-go/common/config/token"
 	vc "mabang-arch-demo-go/common/config/viper"
 	"mabang-arch-demo-go/controller"
@@ -26,18 +28,17 @@ func initComponents() {
 	logger.Info("Starting Application")
 	// 读取本地配置文件
 	vc.InitLocalConfigFile()
-	// 初始化url配置
-	//url.InitUrlConfig()
 	// 初始化Mysql
 	db.InitDbConfig()
 	// 自动生成表
-	autoMigrate()
+	// autoMigrate()
 	// 初始化缓存
 	cache.InitBigCacheConfig()
 	// 初始化Redis
-	//redis.InitRedisConfig()
+	redis.InitRedisConfig()
+
 	// 初始化HttpClient连接池
-	//http.InitHttpClientConfig()
+	http.InitHttpClientConfig()
 
 	// 初始化token
 	token.InitTokenConfig()

@@ -7,3 +7,10 @@ db:
   maxIdleConns: 200
   maxOpenConns: 1000
   connMaxLifetime: 60
+redis:
+  address: "redis-php-default.mabangerp.com:6379"
+  index: 12
+  password: Qf5k69t9RIW5A6htkptT
+  idleTimeout: 12000
+  maxIdle: 5
+  maxActive: 20

@@ -28,7 +28,7 @@ func (c Cache) Get(key string) (value interface{}, err error) {
 
 // Set 根据key，value将目标对象存入缓存中
 func (c Cache) Set(key string, value interface{}) {
-	valueBytes := utils.Serialize(value)
+	valueBytes, _ := utils.Serialize(value)
 	err := c.BigCache.Set(key, valueBytes)
 	if err != nil {
 		panic(err)
