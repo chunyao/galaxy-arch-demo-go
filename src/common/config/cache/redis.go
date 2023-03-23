@@ -1,10 +1,10 @@
 package cache
 
 import (
+	"app/src/common/utils"
 	"github.com/gomodule/redigo/redis"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"mabang-arch-demo-go/common/utils"
 	"time"
 )
 

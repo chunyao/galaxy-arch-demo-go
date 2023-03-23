@@ -1,8 +1,8 @@
 package dao
 
 import (
-	"mabang-arch-demo-go/common/config/db"
-	"mabang-arch-demo-go/model"
+	"app/src/common/config/db"
+	"app/src/model"
 )
 
 type UserDao struct {

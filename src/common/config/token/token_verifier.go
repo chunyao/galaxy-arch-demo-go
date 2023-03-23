@@ -1,14 +1,15 @@
 package token
 
 import (
+	"app/src/common/config/cache"
+	"app/src/dto"
 	"github.com/gin-gonic/gin"
-	"mabang-arch-demo-go/common/config/cache"
-	"mabang-arch-demo-go/dto"
 	"strings"
 )
 
 func TokenVerify(c *gin.Context) {
 	request := c.Request
+	return
 	// 过滤不用token校验的url
 	if noTokenVerify(TokenCfg.IgnorePaths, request.RequestURI) {
 		return
@@ -19,8 +20,9 @@ func TokenVerify(c *gin.Context) {
 	if len(tokenStr) == 0 {
 		panic(NewTokenError(dto.Unauthorized, dto.GetResultMsg(dto.Unauthorized)))
 	}
-
-	if _, err := cache.LocalCache.Get(tokenStr); err != nil {
+	var o interface{}
+	_, _ = cache.LocalCache.Get(tokenStr, &o)
+	if o != nil {
 		panic(NewTokenError(dto.Unauthorized, dto.GetResultMsg(dto.Unauthorized)))
 	}
 
@@ -30,7 +32,9 @@ func TokenVerify(c *gin.Context) {
 // noTokenVerify 判断url是否不需要token校验
 func noTokenVerify(ignorePaths []string, path string) bool {
 	// 查询缓存
-	if noVerify, err := cache.LocalCache.Get(path); err == nil {
+	var noVerify interface{}
+	cache.LocalCache.Get(path, &noVerify)
+	if noVerify != nil {
 		return noVerify.(bool)
 	}
 	// 匹配url

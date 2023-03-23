@@ -1,11 +1,11 @@
 package controller
 
 import (
+	"app/src/common/config/cache"
+	"app/src/dto"
+	"app/src/service"
+	"app/src/service/impl"
 	"github.com/gin-gonic/gin"
-	cache "mabang-arch-demo-go/common/config/cache"
-	"mabang-arch-demo-go/dto"
-	"mabang-arch-demo-go/service"
-	"mabang-arch-demo-go/service/impl"
 	"net/http"
 	"strconv"
 )
@@ -30,10 +30,12 @@ func UserApi(router *gin.Engine) {
 func (userHandler UserHandler) user(c *gin.Context) {
 	userIdStr := c.Param("id")
 	userId, _ := strconv.Atoi(userIdStr)
-	user := userHandler.userService.User(userId)
-	cache.Redis.Set(c, "User"+userIdStr, user, 60)
 	var o interface{}
-	cache.Redis.Get(c, "User"+userIdStr, &o)
-
+	_, _ = cache.LocalCache.Get("User"+userIdStr, &o)
+	if o == nil {
+		user := userHandler.userService.User(userId)
+		cache.LocalCache.Set("User"+userIdStr, user.UserModel)
+		o = user.UserModel
+	}
 	c.JSON(http.StatusOK, dto.Ok(o))
 }

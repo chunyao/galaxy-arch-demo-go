@@ -1,6 +1,8 @@
 package impl
 
-import "mabang-arch-demo-go/dao"
+import (
+	"app/src/dao"
+)
 
 type UserServiceImpl struct {
 }

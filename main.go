@@ -1,15 +1,15 @@
 package main
 
 import (
+	"app/src/common/config/cache"
+	"app/src/common/config/db"
+	"app/src/common/config/gin"
+	"app/src/common/config/http"
+	"app/src/common/config/log"
+	"app/src/common/config/token"
+	vc "app/src/common/config/viper"
+	"app/src/controller"
 	logger "github.com/sirupsen/logrus"
-	"mabang-arch-demo-go/common/config/cache"
-	"mabang-arch-demo-go/common/config/db"
-	"mabang-arch-demo-go/common/config/gin"
-	"mabang-arch-demo-go/common/config/http"
-	"mabang-arch-demo-go/common/config/log"
-	"mabang-arch-demo-go/common/config/token"
-	vc "mabang-arch-demo-go/common/config/viper"
-	"mabang-arch-demo-go/controller"
 	_ "net/url"
 )
 
@@ -28,8 +28,6 @@ func initComponents() {
 	// 初始化Mysql
 	db.InitDbConfig()
 
-	// 自动生成表
-	// autoMigrate()
 	// 初始化缓存
 	cache.InitBigCacheConfig()
 	// 初始化Redis

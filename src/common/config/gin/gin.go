@@ -1,14 +1,12 @@
 package gin
 
 import (
+	err "app/src/common/exception"
 	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	logger "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"mabang-arch-demo-go/common/config/log"
-	"mabang-arch-demo-go/common/config/token"
-	err "mabang-arch-demo-go/common/exception"
 )
 
 // InitGinConfig 初始化Gin
@@ -17,13 +15,13 @@ func InitGinConfig() *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
 	// 入口日志打印
-	router.Use(log.LoggerAccess)
+	//	router.Use(log.LoggerAccess)
 	// 统一异常处理
 	router.Use(err.ErrHandle)
 	// 跨域处理
 	router.Use(cors.Default())
 	// token校验
-	router.Use(token.TokenVerify)
+	//router.Use(token.TokenVerify)
 	// 健康检测
 	router.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{

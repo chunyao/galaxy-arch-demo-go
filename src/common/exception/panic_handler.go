@@ -1,10 +1,10 @@
 package exception
 
 import (
+	"app/src/common/config/token"
+	"app/src/dto"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	"mabang-arch-demo-go/common/config/token"
-	"mabang-arch-demo-go/dto"
 	"net/http"
 	"runtime/debug"
 )

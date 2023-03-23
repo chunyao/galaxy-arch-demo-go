@@ -126,7 +126,7 @@ func NewRedisUtil(pool *redis.Pool) *RedisUtil {
 	return &RedisUtil{pool}
 }
 
-func (ru *RedisUtil) Set(ctx context.Context, key string, value interface{}, ttl int) (err error) {
+func (ru *RedisUtil) Set(key string, value interface{}, ttl int) (err error) {
 	var bytesData []byte
 
 	// 判断是否整数
@@ -156,7 +156,7 @@ func (ru *RedisUtil) Set(ctx context.Context, key string, value interface{}, ttl
 	return nil
 }
 
-func (ru *RedisUtil) Get(ctx context.Context, key string, value interface{}) (hit bool, err error) {
+func (ru *RedisUtil) Get(key string, value interface{}) (hit bool, err error) {
 	if reflect.ValueOf(value).Kind() != reflect.Ptr {
 		return false, errors.New("value must be ptr")
 	}

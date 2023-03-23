@@ -1,10 +1,10 @@
 package cache
 
 import (
+	"app/src/common/utils"
 	"fmt"
 	"github.com/allegro/bigcache/v3"
 	log "github.com/sirupsen/logrus"
-	"mabang-arch-demo-go/common/utils"
 	"math"
 	"time"
 )
@@ -17,13 +17,13 @@ type Cache struct {
 }
 
 // Get 根据key从缓存中获取对象
-func (c Cache) Get(key string) (value interface{}, err error) {
+func (c Cache) Get(key string, value interface{}) (hit bool, err error) {
 	valueBytes, err := c.LocalCache.Get(key)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
-	value = utils.Deserialize(valueBytes)
-	return value, nil
+	err = utils.Decode(valueBytes, value)
+	return true, err
 }
 
 // Set 根据key，value将目标对象存入缓存中

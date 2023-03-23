@@ -1,5 +1,5 @@
 server:
-  appName: mabang-arch-demo-go
+  appName: app
   port: 8888
 
 datasource:

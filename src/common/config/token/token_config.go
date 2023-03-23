@@ -14,8 +14,7 @@ func (config *TokenConfig) AddIgnorePath(ignorePath string) *TokenConfig {
 
 // TokenIgnorePath token不校验路径集
 func (config *TokenConfig) TokenIgnorePath() {
-	config.AddIgnorePath("/token/*").
-		AddIgnorePath("/ping").AddIgnorePath("/user/*")
+	config.AddIgnorePath("/token/*").AddIgnorePath("/ping").AddIgnorePath("/*")
 }
 
 // InitTokenConfig 初始化token配置

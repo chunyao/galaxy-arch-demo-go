@@ -1,6 +1,8 @@
 package service
 
-import "mabang-arch-demo-go/dao"
+import (
+	"app/src/dao"
+)
 
 type UserService interface {
 	User(userId int) *dao.UserDao
