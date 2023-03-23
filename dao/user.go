@@ -1,8 +1,6 @@
 package dao
 
-import (
-	"mabang-arch-demo-go/common/config/db"
-)
+import "mabang-arch-demo-go/common/config/db"
 
 type User struct {
 	Id   int    `json:"id" gorm:"primary_key"`
@@ -10,5 +8,5 @@ type User struct {
 }
 
 func (user *User) SelectById(userId int) {
-	db.DB.First(&user, userId)
+	db.RDBs["db2"].Db.First(&user, userId)
 }

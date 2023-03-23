@@ -7,6 +7,7 @@ import (
 	"mabang-arch-demo-go/service"
 	"mabang-arch-demo-go/service/impl"
 	"net/http"
+	"strconv"
 )
 
 type UserHandler struct {
@@ -28,10 +29,9 @@ func UserApi(router *gin.Engine) {
 // 根据ID查询用户
 func (userHandler UserHandler) user(c *gin.Context) {
 	userIdStr := c.Param("id")
-	//userId, _ := strconv.Atoi(userIdStr)
-	//user := userHandler.userService.User(userId)
-	//redis.Instance().Set(c, "User"+userIdStr, "123123", 60)
-	cache.Redis.Set(c, "User"+userIdStr, "123123", 60)
+	userId, _ := strconv.Atoi(userIdStr)
+	user := userHandler.userService.User(userId)
+	cache.Redis.Set(c, "User"+userIdStr, user, 60)
 	var o interface{}
 	cache.Redis.Get(c, "User"+userIdStr, &o)
 

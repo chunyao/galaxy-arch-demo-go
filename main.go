@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	logger "github.com/sirupsen/logrus"
 	"mabang-arch-demo-go/common/config/cache"
 	"mabang-arch-demo-go/common/config/db"
@@ -11,7 +10,6 @@ import (
 	"mabang-arch-demo-go/common/config/token"
 	vc "mabang-arch-demo-go/common/config/viper"
 	"mabang-arch-demo-go/controller"
-	"mabang-arch-demo-go/dao"
 	_ "net/url"
 )
 
@@ -29,6 +27,7 @@ func initComponents() {
 	vc.InitLocalConfigFile()
 	// 初始化Mysql
 	db.InitDbConfig()
+
 	// 自动生成表
 	// autoMigrate()
 	// 初始化缓存
@@ -51,14 +50,4 @@ func initComponents() {
 
 	// 启动Gin
 	gin.RunGin(router)
-}
-
-// 自动生成表
-func autoMigrate() {
-	err := db.DB.AutoMigrate(dao.User{})
-	if err != nil {
-		_ = fmt.Errorf("自动生成user表失败")
-		panic(err)
-	}
-
 }
