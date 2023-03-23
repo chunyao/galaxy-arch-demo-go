@@ -20,7 +20,7 @@ func TokenVerify(c *gin.Context) {
 		panic(NewTokenError(dto.Unauthorized, dto.GetResultMsg(dto.Unauthorized)))
 	}
 
-	if _, err := cache.BigCache.Get(tokenStr); err != nil {
+	if _, err := cache.LocalCache.Get(tokenStr); err != nil {
 		panic(NewTokenError(dto.Unauthorized, dto.GetResultMsg(dto.Unauthorized)))
 	}
 
@@ -30,7 +30,7 @@ func TokenVerify(c *gin.Context) {
 // noTokenVerify 判断url是否不需要token校验
 func noTokenVerify(ignorePaths []string, path string) bool {
 	// 查询缓存
-	if noVerify, err := cache.BigCache.Get(path); err == nil {
+	if noVerify, err := cache.LocalCache.Get(path); err == nil {
 		return noVerify.(bool)
 	}
 	// 匹配url
@@ -40,13 +40,13 @@ func noTokenVerify(ignorePaths []string, path string) bool {
 			ignorePath = strings.Split(ignorePath, "*")[0]
 			if endIndex := strings.LastIndex(path, "/"); strings.Compare(path[0:endIndex+1], ignorePath) == 0 {
 				// 添加缓存
-				cache.BigCache.Set(path, true)
+				cache.LocalCache.Set(path, true)
 				return true
 			}
 			// 无通配符*过滤
 		} else if strings.Compare(path, ignorePath) == 0 {
 			// 添加缓存
-			cache.BigCache.Set(path, true)
+			cache.LocalCache.Set(path, true)
 			return true
 		}
 	}

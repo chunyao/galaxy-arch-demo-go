@@ -9,16 +9,16 @@ import (
 	"time"
 )
 
-var BigCache *Cache
+var LocalCache *Cache
 
 // Cache 缓存
 type Cache struct {
-	BigCache *bigcache.BigCache // 本地缓存
+	LocalCache *bigcache.BigCache // 本地缓存
 }
 
 // Get 根据key从缓存中获取对象
 func (c Cache) Get(key string) (value interface{}, err error) {
-	valueBytes, err := c.BigCache.Get(key)
+	valueBytes, err := c.LocalCache.Get(key)
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +29,7 @@ func (c Cache) Get(key string) (value interface{}, err error) {
 // Set 根据key，value将目标对象存入缓存中
 func (c Cache) Set(key string, value interface{}) {
 	valueBytes, _ := utils.Serialize(value)
-	err := c.BigCache.Set(key, valueBytes)
+	err := c.LocalCache.Set(key, valueBytes)
 	if err != nil {
 		panic(err)
 	}
@@ -49,8 +49,8 @@ func InitBigCacheConfig() {
 	if err != nil {
 		panic(fmt.Errorf("初始化BigCache: %s \n", err))
 	}
-	BigCache = &Cache{
-		BigCache: bigCache,
+	LocalCache = &Cache{
+		LocalCache: bigCache,
 	}
 	log.Info("BigCache: 初始化完成")
 }

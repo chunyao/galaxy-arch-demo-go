@@ -8,7 +8,6 @@ import (
 	"mabang-arch-demo-go/common/config/gin"
 	"mabang-arch-demo-go/common/config/http"
 	"mabang-arch-demo-go/common/config/log"
-	"mabang-arch-demo-go/common/config/redis"
 	"mabang-arch-demo-go/common/config/token"
 	vc "mabang-arch-demo-go/common/config/viper"
 	"mabang-arch-demo-go/controller"
@@ -35,7 +34,7 @@ func initComponents() {
 	// 初始化缓存
 	cache.InitBigCacheConfig()
 	// 初始化Redis
-	redis.InitRedisConfig()
+	cache.InitRedisConfig()
 
 	// 初始化HttpClient连接池
 	http.InitHttpClientConfig()

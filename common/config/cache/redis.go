@@ -1,4 +1,4 @@
-package redis
+package cache
 
 import (
 	"github.com/gomodule/redigo/redis"
@@ -9,6 +9,7 @@ import (
 )
 
 var redisPool *redis.Pool
+var Redis *utils.RedisUtil
 
 // InitRedisConfig 初始化redis
 func InitRedisConfig() {
@@ -52,10 +53,6 @@ func InitRedisConfig() {
 			return err
 		},
 	}
+	Redis = utils.NewRedisUtil(redisPool)
 	log.Info("Redis: initialization completed")
-}
-
-func Obj() *utils.RedisUtil {
-	redisUtil := utils.NewRedisUtil(redisPool)
-	return redisUtil
 }

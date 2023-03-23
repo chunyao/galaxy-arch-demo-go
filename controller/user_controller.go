@@ -2,7 +2,7 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
-	"mabang-arch-demo-go/common/config/redis"
+	cache "mabang-arch-demo-go/common/config/cache"
 	"mabang-arch-demo-go/dto"
 	"mabang-arch-demo-go/service"
 	"mabang-arch-demo-go/service/impl"
@@ -30,10 +30,10 @@ func (userHandler UserHandler) user(c *gin.Context) {
 	userIdStr := c.Param("id")
 	//userId, _ := strconv.Atoi(userIdStr)
 	//user := userHandler.userService.User(userId)
-	redis.Obj().Set(c, "User"+userIdStr, "123123", 60)
-
+	//redis.Instance().Set(c, "User"+userIdStr, "123123", 60)
+	cache.Redis.Set(c, "User"+userIdStr, "123123", 60)
 	var o interface{}
-	redis.Obj().Get(c, "User"+userIdStr, &o)
+	cache.Redis.Get(c, "User"+userIdStr, &o)
 
 	c.JSON(http.StatusOK, dto.Ok(o))
 }
