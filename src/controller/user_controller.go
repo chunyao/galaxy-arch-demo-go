@@ -5,9 +5,12 @@ import (
 	"app/src/dto"
 	"app/src/service"
 	"app/src/service/impl"
+	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 type UserHandler struct {
@@ -27,15 +30,22 @@ func UserApi(router *gin.Engine) {
 }
 
 // 根据ID查询用户
-func (userHandler UserHandler) user(c *gin.Context) {
-	userIdStr := c.Param("id")
+func (userHandler UserHandler) user(ctx *gin.Context) {
+	userIdStr := ctx.Param("id")
 	userId, _ := strconv.Atoi(userIdStr)
-	var o interface{}
-	_, _ = cache.LocalCache.Get("User"+userIdStr, &o)
-	if o == nil {
+	var data interface{}
+	//_, _ = cache.LocalCache.Get("User"+userIdStr, &o)
+	o, _ := cache.Redis.Get(ctx, "User:"+userIdStr).Result()
+	fmt.Println("sdf ", o)
+	if len(o) == 0 {
 		user := userHandler.userService.User(userId)
-		cache.LocalCache.Set("User"+userIdStr, user.UserModel)
-		o = user.UserModel
+		paramJson, _ := json.Marshal(user.UserModel)
+		cache.Redis.Set(ctx, "User:"+userIdStr, string(paramJson), 60*time.Second)
+		o = string(paramJson)
+
 	}
-	c.JSON(http.StatusOK, dto.Ok(o))
+
+	json.Unmarshal([]byte(o), &data)
+	fmt.Println(data)
+	ctx.JSON(http.StatusOK, dto.Ok(data))
 }

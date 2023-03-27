@@ -1,15 +1,13 @@
 package cache
 
 import (
-	"app/src/common/utils"
-	"github.com/gomodule/redigo/redis"
+	"github.com/redis/go-redis/v9"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"time"
 )
 
-var redisPool *redis.Pool
-var Redis *utils.RedisUtil
+var Redis *redis.Client
 
 // InitRedisConfig 初始化redis
 func InitRedisConfig() {
@@ -17,42 +15,20 @@ func InitRedisConfig() {
 
 	var (
 		address     = viper.GetString("redis.address")
-		index       = viper.GetInt("redis.index")
+		db          = viper.GetInt("redis.db")
 		password    = viper.GetString("redis.password")
 		idleTimeout = time.Duration(viper.GetInt("redis.idleTimeout")) * time.Second
 		maxIdle     = viper.GetInt("redis.maxIdle")
-		maxActive   = viper.GetInt("redis.maxActive")
+		poolSize    = viper.GetInt("redis.poolSize")
 	)
-	redisPool = &redis.Pool{
-		MaxIdle:     maxIdle,     // 最大的空闲连接数
-		MaxActive:   maxActive,   // 最大的激活连接数
-		IdleTimeout: idleTimeout, // 最大的空闲连接等待时间，超过此时间后，空闲连接将被关闭
-		Dial: func() (redis.Conn, error) {
-			conn, err := redis.Dial("tcp", address)
-			if err != nil {
-				return nil, err
-			}
-			if password != "" {
-				// 验证密码
-				if _, err := conn.Do("AUTH", password); err != nil {
-					err := conn.Close()
-					if err != nil {
-						return nil, err
-					}
-					return nil, err
-				}
-			}
-			// 选择db
-			if _, err := conn.Do("SELECT", index); err != nil {
-				return nil, err
-			}
-			return conn, nil
-		},
-		TestOnBorrow: func(conn redis.Conn, t time.Time) error {
-			_, err := conn.Do("PING")
-			return err
-		},
-	}
-	Redis = utils.NewRedisUtil(redisPool)
+	Redis = redis.NewClient(&redis.Options{
+		Addr:         address,
+		Password:     password, // no password set
+		DB:           db,       // use default DB
+		PoolSize:     poolSize,
+		MaxIdleConns: maxIdle,
+		PoolTimeout:  idleTimeout,
+	})
+
 	log.Info("Redis: initialization completed")
 }
