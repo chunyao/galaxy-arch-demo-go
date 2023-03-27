@@ -14,31 +14,31 @@ import (
 	"time"
 )
 
-type UserHandler struct {
+type UserController struct {
 	userService service.UserService
 	rds         cache.RDBManager
 }
 
 func UserApi(router *gin.Engine) {
 
-	userHandler := UserHandler{
+	userController := UserController{
 		userService: &impl.UserServiceImpl{},
 	}
 
 	userGroup := router.Group("user/")
 	{
-		userGroup.GET("/:id", userHandler.user)
+		userGroup.GET("/:id", userController.user)
 	}
 }
 
 // 根据ID查询用户 Redis 使用Demo
-func (userHandler UserHandler) user(ctx *gin.Context) {
+func (userController UserController) user(ctx *gin.Context) {
 	userIdStr := ctx.Param("id")
 	userId, _ := strconv.Atoi(userIdStr)
 	var data model.User
 	o, _ := cache.RDs["php"].Redis.Get(ctx, "User:"+userIdStr).Result()
 	if len(o) == 0 {
-		user := userHandler.userService.User(userId)
+		user := userController.userService.User(userId)
 		paramJson, _ := json.Marshal(user.UserModel)
 		cache.RDs["php"].Redis.Set(ctx, "User:"+userIdStr, string(paramJson), 60*time.Second)
 		o = string(paramJson)
@@ -46,7 +46,8 @@ func (userHandler UserHandler) user(ctx *gin.Context) {
 	}
 
 	json.Unmarshal([]byte(o), &data)
-	userHandler.userService.SaveUserMongo(data)
-	fmt.Println(data)
-	ctx.JSON(http.StatusOK, dto.Ok(data))
+	//userHandler.userService.SaveUserMongo(data)
+	data2 := userController.userService.UserMongo(data.Id)
+	fmt.Println(data2)
+	ctx.JSON(http.StatusOK, dto.Ok(data2))
 }
