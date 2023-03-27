@@ -16,21 +16,9 @@ const (
 	Unauthorized        = "401" // token校验错误
 	InternalServerError = "500" // 服务器内部错误
 
-	UserUnAuthIdentityErr           = "-20001" // 该用户未实名认证
-	AgeRefusePayErr                 = "-20002" // 年龄在[0,8) 不提供充值服务
-	OrderNotPayErr                  = "-20003" // 订单未支付成功
-	OrderDeliveredErr               = "-20004" // 订单已处于发货状态
-	ObtainPayStrategyErr            = "-20005" // 获取未成年人支付校验策略失败
-	GuestNotPayErr                  = "-20006" // 不支持游客使用支付服务
-	OverMaxCharge8And16PerTimeErr   = "-20007" // 年龄在[8，16），单笔充值金额超过充值上限
-	OverMaxCharge16And18PerTimeErr  = "-20008" // 年龄在[16，18），单笔充值金额超过充值上限
-	OverMaxCharge8And16PerMonthErr  = "-20009" // 年龄在[8，16），单月充值金额超过充值上限
-	OverMaxCharge16And18PerMonthErr = "-20010" // 年龄在[16，18），单月充值金额超过充值上限
-	ObtainDeliveryStrategyErr       = "-20011" // 获取通知游戏厂商发货策略失败
-	NotifyCPErr                     = "-20012" // 通知游戏厂商发放道具请求失败
+	UserUnAuthIdentityErr = "-20001" // 该用户未实名认证
+	AgeRefusePayErr       = "-20002" // 年龄在[0,8) 不提供充值服务
 
-	QueryAgeServerErr = "-30001" // 查询年龄的服务不可访问
-	DingTalkRobotErr  = "-30002" // 钉钉机器人服务不可用
 )
 
 var resultMsg = map[string]string{

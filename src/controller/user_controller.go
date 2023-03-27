@@ -29,7 +29,7 @@ func UserApi(router *gin.Engine) {
 	}
 }
 
-// 根据ID查询用户
+// 根据ID查询用户 Redis 使用Demo
 func (userHandler UserHandler) user(ctx *gin.Context) {
 	userIdStr := ctx.Param("id")
 	userId, _ := strconv.Atoi(userIdStr)
