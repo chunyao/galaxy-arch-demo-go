@@ -3,6 +3,7 @@ package controller
 import (
 	"app/src/common/config/cache"
 	"app/src/dto"
+	"app/src/model"
 	"app/src/service"
 	"app/src/service/impl"
 	"encoding/json"
@@ -34,9 +35,8 @@ func UserApi(router *gin.Engine) {
 func (userHandler UserHandler) user(ctx *gin.Context) {
 	userIdStr := ctx.Param("id")
 	userId, _ := strconv.Atoi(userIdStr)
-	var data interface{}
+	var data model.User
 	o, _ := cache.RDs["php"].Redis.Get(ctx, "User:"+userIdStr).Result()
-	fmt.Println("sdf ", o)
 	if len(o) == 0 {
 		user := userHandler.userService.User(userId)
 		paramJson, _ := json.Marshal(user.UserModel)
@@ -46,6 +46,7 @@ func (userHandler UserHandler) user(ctx *gin.Context) {
 	}
 
 	json.Unmarshal([]byte(o), &data)
+	userHandler.userService.SaveUserMongo(data)
 	fmt.Println(data)
 	ctx.JSON(http.StatusOK, dto.Ok(data))
 }

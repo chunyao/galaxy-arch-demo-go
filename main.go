@@ -6,6 +6,7 @@ import (
 	"app/src/common/config/gin"
 	"app/src/common/config/http"
 	"app/src/common/config/log"
+	"app/src/common/config/mongo"
 	"app/src/common/config/token"
 	vc "app/src/common/config/viper"
 	"app/src/controller"
@@ -32,7 +33,8 @@ func initComponents() {
 	cache.InitBigCacheConfig()
 	// 初始化Redis
 	cache.InitRedisConfig()
-
+	// 初始化mongo
+	mongo.InitMongoDB()
 	// 初始化HttpClient连接池
 	http.InitHttpClientConfig()
 
