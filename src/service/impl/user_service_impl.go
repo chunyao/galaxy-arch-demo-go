@@ -22,6 +22,9 @@ func (UserServiceImpl) UserMongo(userId int) *dao.UserDao {
 
 func (UserServiceImpl) SaveUserMongo(req model.User) *dao.UserDao {
 	user := &dao.UserDao{}
-	user.SaveToMongo(req)
+	var userDo model.UserDo
+	userDo.Id = req.Id
+	userDo.Name = req.Name
+	user.SaveToMongo(userDo)
 	return user
 }

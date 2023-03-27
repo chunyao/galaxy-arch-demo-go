@@ -47,7 +47,7 @@ func (userController UserController) user(ctx *gin.Context) {
 
 	json.Unmarshal([]byte(o), &data)
 	//userHandler.userService.SaveUserMongo(data)
-	data2 := userController.userService.UserMongo(data.Id)
+	data2 := userController.userService.UserMongo(data.Id).UserDoModel
 	fmt.Println(data2)
 	ctx.JSON(http.StatusOK, dto.Ok(data2))
 }
