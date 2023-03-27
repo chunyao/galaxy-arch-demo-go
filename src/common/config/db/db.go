@@ -13,7 +13,7 @@ import (
 // db连接
 var (
 	MASTER = viper.GetStringMap("datasource.primary") // 默认主数据源
-	RDBs   = map[string]*RDBManager{}                 // 初始化时加载数据源到集合
+	DBs    = map[string]*RDBManager{}                 // 初始化时加载数据源到集合
 )
 
 // 连接管理器
@@ -47,7 +47,7 @@ func InitDbConfig() {
 			Db:     db,
 			DsName: k,
 		}
-		RDBs[k] = rdb
+		DBs[k] = rdb
 	}
 
 	log.Info("Mysql: 数据库初始化完成")

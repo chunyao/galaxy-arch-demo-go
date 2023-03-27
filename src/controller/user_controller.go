@@ -15,6 +15,7 @@ import (
 
 type UserHandler struct {
 	userService service.UserService
+	rds         cache.RDBManager
 }
 
 func UserApi(router *gin.Engine) {
@@ -34,13 +35,12 @@ func (userHandler UserHandler) user(ctx *gin.Context) {
 	userIdStr := ctx.Param("id")
 	userId, _ := strconv.Atoi(userIdStr)
 	var data interface{}
-	//_, _ = cache.LocalCache.Get("User"+userIdStr, &o)
-	o, _ := cache.Redis.Get(ctx, "User:"+userIdStr).Result()
+	o, _ := cache.RDs["php"].Redis.Get(ctx, "User:"+userIdStr).Result()
 	fmt.Println("sdf ", o)
 	if len(o) == 0 {
 		user := userHandler.userService.User(userId)
 		paramJson, _ := json.Marshal(user.UserModel)
-		cache.Redis.Set(ctx, "User:"+userIdStr, string(paramJson), 60*time.Second)
+		cache.RDs["php"].Redis.Set(ctx, "User:"+userIdStr, string(paramJson), 60*time.Second)
 		o = string(paramJson)
 
 	}

@@ -10,5 +10,5 @@ type UserDao struct {
 }
 
 func (user *UserDao) SelectById(userId int) {
-	db.RDBs["db2"].Db.First(&user.UserModel, userId)
+	db.DBs["db2"].Db.First(&user.UserModel, userId)
 }
