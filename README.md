@@ -1,4 +1,4 @@
-类似于springboot开发风格的框架,易于招人,市场上java开发还是比较好找的。
+类似于springboot开发风格的框架
 ![img.png](img.png)
 
 基于Golang 版本 1.18.4
