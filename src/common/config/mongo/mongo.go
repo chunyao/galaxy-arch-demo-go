@@ -46,7 +46,7 @@ func MGoSetup(name string) (*mongo.Client, error) {
 		SetReplicaSet(viper.GetString("mongo." + name + ".replicaset")).
 		SetMinPoolSize(uint64(viper.GetInt("mongo." + name + ".MinPoolSize"))).
 		SetMaxPoolSize(uint64(viper.GetInt("mongo." + name + ".MaxPoolSize"))).
-		SetMaxConnIdleTime(time.Duration(viper.GetInt("mongo."+name+".MaxConnIdleTime")) * time.Second).SetTimeout(10 * time.Second))
+		SetMaxConnIdleTime(time.Duration(viper.GetInt("mongo." + name + ".MaxConnIdleTime"))).SetTimeout(10 * time.Second))
 	err = mgo.Connect(context.TODO())
 	if err != nil {
 		log.Fatalf("[GetMongoClient.Connect] Error while connect to mongodb %v", err)

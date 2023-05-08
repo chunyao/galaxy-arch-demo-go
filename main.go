@@ -5,7 +5,7 @@ import (
 	"app/src/common/config/db"
 	"app/src/common/config/gin"
 	"app/src/common/config/http"
-	"app/src/common/config/log"
+	//	"app/src/common/config/log"
 	"app/src/common/config/mongo"
 	"app/src/common/config/token"
 	vc "app/src/common/config/viper"
@@ -21,7 +21,7 @@ func main() {
 // 初始化服务所有组件
 func initComponents() {
 	// 初始化日志
-	log.InitLogConfig()
+	//log.InitLogConfig()
 	logger.Info("===================================================================================")
 	logger.Info("Starting Application")
 	// 读取本地配置文件
