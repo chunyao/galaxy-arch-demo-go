@@ -1,4 +1,4 @@
-类似于springboot开发风格的框架
+类似于springboot开发风格的框架。
 ![img.png](img.png)
 
 基于Golang 版本 1.18.4
