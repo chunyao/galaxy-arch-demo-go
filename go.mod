@@ -20,6 +20,7 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/spf13/viper v1.15.0
+	github.com/streadway/amqp v1.1.0
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.42
 	github.com/xxl-job/xxl-job-executor-go v1.2.0
 	go.mongodb.org/mongo-driver v1.11.3

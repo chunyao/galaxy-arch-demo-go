@@ -15,6 +15,6 @@ Galaxy Go Framework
 7. 支持 XXL-Job 分布式任务调度
 中间件：
 
-1. rabbitmq 开发中
+1. 支持 rabbitmq 
 2. ES 开发中
 3. kafka 开发中
