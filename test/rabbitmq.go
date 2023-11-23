@@ -10,7 +10,7 @@ import (
 func main() {
 
 	// 初始化mq
-	mq := rabbitMq.NewRabbitMQ("queue_publisher", "exchange_publisher", "key1")
+	mq := rabbitMq.RabbitMQProduce("queue_publisher", "exchange_publisher", "key1")
 	defer mq.ReleaseRes() // 完成任务释放资源
 
 	// 1.声明队列

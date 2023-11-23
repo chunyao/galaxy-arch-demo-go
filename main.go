@@ -7,10 +7,9 @@ import (
 	"app/src/common/config/gin"
 	http2 "app/src/common/config/http"
 	"app/src/common/config/log"
-	"app/src/common/config/mongo"
+	"app/src/common/config/rabbitMq"
 	"app/src/common/config/token"
 	vc "app/src/common/config/viper"
-	"app/src/common/config/xxlJob"
 	"app/src/controller"
 	"runtime"
 
@@ -42,13 +41,16 @@ func initComponents() {
 	// 初始化Redis
 	cache.InitRedisConfig()
 	// 初始化mongo
-	mongo.InitMongoDB()
+	//mongo.InitMongoDB()
 	// 初始化HttpClient连接池
 	http2.InitHttpClientConfig()
 	// 初始化Xxl-Job
-	xxlJob.InitJob()
+	//xxlJob.InitJob()
 	// 初始化token
 	token.InitTokenConfig()
+	// 初始化 rabbitmq
+	rabbitMq.InitRabbitMqDeadConsumer()
+	//初始化cos
 	cos.InitCosClientConfig()
 	// 初始化Gin
 	router := gin.InitGinConfig()

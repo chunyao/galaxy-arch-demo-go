@@ -1,15 +1,18 @@
 package rabbitMq
 
 import (
+	"app/src/listener"
+	"app/src/service/impl"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"github.com/streadway/amqp"
-	"log"
 ) //导入mq包
 
 // MQURL 格式 amqp://账号：密码@rabbitmq服务器地址：端口号/vhost (默认是5672端口)
 // 端口可在 /etc/rabbitMq/rabbitMq-env.conf 配置文件设置，也可以启动后通过netstat -tlnp查看
-const MQURL = "amqp://mdc:A0ea2DHcit@192.168.2.20:5672/"
+const MQURL = ""
 
-type RabbitMQ struct {
+type Rabbit struct {
 	Conn    *amqp.Connection
 	Channel *amqp.Channel
 	// 队列名称
@@ -22,17 +25,72 @@ type RabbitMQ struct {
 	Mqurl string
 }
 
+var RabbitMq Rabbit
+
+func InitRabbitMqDeadConsumer() {
+
+	var err error
+	connct := "amqp://" + viper.GetString("rabbitmq.username") + ":" +
+		viper.GetString("rabbitmq.password") + "@" + viper.GetString("rabbitmq.host") + ":" +
+		viper.GetString("rabbitmq.port") + "/" + viper.GetString("rabbitmq.vhost")
+	log.Info("初始化RabbitMq 消费者")
+
+	for _, queueName := range viper.GetStringMapString("rabbitmq.queue.dead") {
+		//	go func(queueName string) {
+		comsumer := Rabbit{
+			Mqurl: connct,
+		}
+		comsumer.Conn, err = amqp.Dial(connct)
+		checkErr(err, "创建连接失败")
+		comsumer.Channel, err = comsumer.Conn.Channel()
+		checkErr(err, "创建Channel失败")
+		msgs, err := comsumer.Channel.Consume(
+			queueName,                // name
+			queueName+"_consumerTag", // consumerTag,
+			false,
+			false,
+			false,
+			false,
+			nil,
+		)
+
+		deadListenerConsumer := listener.DeadListenerConsumer{
+			DeadQueueService: &impl.DeadQueueServiceImpl{},
+		}
+		go func() {
+			for msg := range msgs {
+				log.Printf("Received a message: %s", msg.Body)
+				log.Printf("Done")
+
+				if deadListenerConsumer.Do(msg.Body) == true {
+					msg.Ack(false)
+				}
+
+			}
+		}()
+
+		checkErr(err, "获取消息失败")
+		log.Info("创建消费者" + queueName)
+		//	}(queueName)
+
+	}
+
+}
+
 // 创建结构体实例
-func NewRabbitMQ(queueName, exchange, routingKey string) *RabbitMQ {
-	rabbitMQ := RabbitMQ{
+func RabbitMQProduce(queueName, exchange, routingKey string) *Rabbit {
+	connect := "amqp://" + viper.GetString("rabbitmq.username") + ":" + viper.GetString("rabbitmq.password") + "@" + viper.GetString("rabbitmq.host") + ":" + viper.GetString("rabbitmq.port") + "/"
+
+	rabbitMQ := Rabbit{
 		QueueName:  queueName,
 		Exchange:   exchange,
 		RoutingKey: routingKey,
-		Mqurl:      MQURL,
+		Mqurl:      connect,
 	}
 	var err error
 	//创建rabbitmq连接
 	rabbitMQ.Conn, err = amqp.Dial(rabbitMQ.Mqurl)
+
 	checkErr(err, "创建连接失败")
 
 	//创建Channel
@@ -44,7 +102,7 @@ func NewRabbitMQ(queueName, exchange, routingKey string) *RabbitMQ {
 }
 
 // 释放资源,建议NewRabbitMQ获取实例后 配合defer使用
-func (mq *RabbitMQ) ReleaseRes() {
+func (mq *Rabbit) ReleaseRes() {
 	mq.Conn.Close()
 	mq.Channel.Close()
 }
