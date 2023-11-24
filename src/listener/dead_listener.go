@@ -2,7 +2,6 @@ package listener
 
 import (
 	"app/src/service"
-	log "github.com/sirupsen/logrus"
 )
 
 type DeadListenerConsumer struct {
@@ -10,7 +9,7 @@ type DeadListenerConsumer struct {
 }
 
 func (deadConsumer DeadListenerConsumer) Do(msg []byte) bool {
-	log.Printf("Received a message: %s", msg)
+	//log.Printf("Received a message: %s", msg)
 	deadConsumer.DeadQueueService.Save(msg)
 	return true
 }

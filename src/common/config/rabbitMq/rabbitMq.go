@@ -1,6 +1,7 @@
 package rabbitMq
 
 import (
+	"app/src/common/utils"
 	"app/src/listener"
 	"app/src/service/impl"
 	log "github.com/sirupsen/logrus"
@@ -36,50 +37,41 @@ func InitRabbitMqDeadConsumer() {
 	log.Info("初始化RabbitMq 消费者")
 
 	for _, queueName := range viper.GetStringMapString("rabbitmq.queue.dead") {
-		//	go func(queueName string) {
-		comsumer := Rabbit{
-			Mqurl: connct,
-		}
-		comsumer.Conn, err = amqp.Dial(connct)
-		checkErr(err, "创建连接失败")
-		comsumer.Channel, err = comsumer.Conn.Channel()
-		comsumer.Channel.Qos(10, 0, true)
-		checkErr(err, "创建Channel失败")
-		msgs, err := comsumer.Channel.Consume(
-			queueName,                // name
-			queueName+"_consumerTag", // consumerTag,
-			false,
-			false,
-			false,
-			false,
-			nil,
-		)
-
-		deadListenerConsumer := listener.DeadListenerConsumer{
-			DeadQueueService: &impl.DeadQueueServiceImpl{},
-		}
-		//	go func() {
-		for msg := range msgs {
-			//log.Printf("Received a message: %s", msg.Body)
-			//log.Printf("Done")
-			//log.Printf("queue name: " + queueName)
-			//log.Printf("route key: " + msg.RoutingKey)
-
-			if deadListenerConsumer.Do(msg.Body) == true {
-				msg.Ack(false)
-			} else {
-				log.Printf("false")
+		go func(queueName string) {
+			deadListenerConsumer := listener.DeadListenerConsumer{
+				DeadQueueService: &impl.DeadQueueServiceImpl{},
 			}
+			comsumer := Rabbit{
+				Mqurl: connct,
+			}
+			comsumer.Conn, err = amqp.Dial(connct)
+			checkErr(err, "创建连接失败")
+			comsumer.Channel, err = comsumer.Conn.Channel()
+			checkErr(err, "创建Channel失败")
+			comsumer.Channel.Qos(20, 0, false)
+			go subscribe(comsumer.Channel, utils.NewUUID(), queueName, func(msgs <-chan amqp.Delivery, s string) {
+				for msg := range msgs {
 
-		}
-		//	}()
+					if deadListenerConsumer.Do(msg.Body) == true {
+						msg.Ack(false)
+					}
 
-		checkErr(err, "获取消息失败")
-		log.Info("创建消费者" + queueName)
-		//	}(queueName)
+				}
+			})
+
+			log.Info("创建消费者" + queueName)
+		}(queueName)
 
 	}
 
+}
+func subscribe(ch *amqp.Channel, key string, queue string, callback func(<-chan amqp.Delivery, string)) {
+	msgs, err := ch.Consume(queue, key, false, false, false, false, nil)
+
+	if err != nil {
+		checkErr(err, "获取消息失败")
+	}
+	callback(msgs, key)
 }
 
 // 创建结构体实例
