@@ -2,15 +2,17 @@ package main
 
 import (
 	"app/src/common/config/rabbitMq"
+	vc "app/src/common/config/viper"
 	"fmt"
 	"github.com/streadway/amqp"
 )
 
 // 生产者发布流程
 func main() {
+	vc.InitLocalConfigFile()
 
 	// 初始化mq
-	mq := rabbitMq.RabbitMQProduce("queue_publisher", "exchange_publisher", "key1")
+	mq := rabbitMq.RabbitMQProduce("odoo_drl_receive_job.dead", "odoo_drl_receive_job.dead", "odoo_drl_receive_job.dead")
 	defer mq.ReleaseRes() // 完成任务释放资源
 
 	// 1.声明队列
@@ -38,7 +40,7 @@ func main() {
 	// 2.声明交换器
 	err = mq.Channel.ExchangeDeclare(
 		mq.Exchange, //交换器名
-		"topic",     //exchange type：一般用fanout、direct、topic
+		"direct",    //exchange type：一般用fanout、direct、topic
 		true,        // 是否持久化
 		false,       //是否自动删除（自动删除的前提是至少有一个队列或者交换器与这和交换器绑定，之后所有与这个交换器绑定的队列或者交换器都与此解绑）
 		false,       //设置是否内置的。true表示是内置的交换器，客户端程序无法直接发送消息到这个交换器中，只能通过交换器路由到交换器这种方式
@@ -69,7 +71,7 @@ func main() {
 		fmt.Println("绑定队列和交换器失败", err)
 		return
 	}
-
+	fmt.Println("3.")
 	// 4.发送消息
 	for i := 0; i < 100000; i++ {
 		mq.Channel.Publish(

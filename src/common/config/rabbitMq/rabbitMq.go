@@ -43,6 +43,7 @@ func InitRabbitMqDeadConsumer() {
 		comsumer.Conn, err = amqp.Dial(connct)
 		checkErr(err, "创建连接失败")
 		comsumer.Channel, err = comsumer.Conn.Channel()
+		comsumer.Channel.Qos(10, 0, true)
 		checkErr(err, "创建Channel失败")
 		msgs, err := comsumer.Channel.Consume(
 			queueName,                // name
@@ -57,17 +58,21 @@ func InitRabbitMqDeadConsumer() {
 		deadListenerConsumer := listener.DeadListenerConsumer{
 			DeadQueueService: &impl.DeadQueueServiceImpl{},
 		}
-		go func() {
-			for msg := range msgs {
-				log.Printf("Received a message: %s", msg.Body)
-				log.Printf("Done")
+		//	go func() {
+		for msg := range msgs {
+			//log.Printf("Received a message: %s", msg.Body)
+			//log.Printf("Done")
+			//log.Printf("queue name: " + queueName)
+			//log.Printf("route key: " + msg.RoutingKey)
 
-				if deadListenerConsumer.Do(msg.Body) == true {
-					msg.Ack(false)
-				}
-
+			if deadListenerConsumer.Do(msg.Body) == true {
+				msg.Ack(false)
+			} else {
+				log.Printf("false")
 			}
-		}()
+
+		}
+		//	}()
 
 		checkErr(err, "获取消息失败")
 		log.Info("创建消费者" + queueName)
@@ -79,7 +84,7 @@ func InitRabbitMqDeadConsumer() {
 
 // 创建结构体实例
 func RabbitMQProduce(queueName, exchange, routingKey string) *Rabbit {
-	connect := "amqp://" + viper.GetString("rabbitmq.username") + ":" + viper.GetString("rabbitmq.password") + "@" + viper.GetString("rabbitmq.host") + ":" + viper.GetString("rabbitmq.port") + "/"
+	connect := "amqp://" + viper.GetString("rabbitmq.username") + ":" + viper.GetString("rabbitmq.password") + "@" + viper.GetString("rabbitmq.host") + ":" + viper.GetString("rabbitmq.port") + "/" + viper.GetString("rabbitmq.vhost")
 
 	rabbitMQ := Rabbit{
 		QueueName:  queueName,
