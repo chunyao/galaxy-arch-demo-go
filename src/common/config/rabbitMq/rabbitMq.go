@@ -30,7 +30,6 @@ var RabbitMq Rabbit
 
 func InitRabbitMqDeadConsumer() {
 
-	var err error
 	connct := "amqp://" + viper.GetString("rabbitmq.username") + ":" +
 		viper.GetString("rabbitmq.password") + "@" + viper.GetString("rabbitmq.host") + ":" +
 		viper.GetString("rabbitmq.port") + "/" + viper.GetString("rabbitmq.vhost")
@@ -39,26 +38,24 @@ func InitRabbitMqDeadConsumer() {
 	for _, queueName := range viper.GetStringMapString("rabbitmq.queue.dead") {
 		go func(queueName string) {
 			var i = 0
+
+			conn, err := amqp.Dial(connct)
+			checkErr(err, "创建连接失败")
 			for i = 0; i <= 10; i++ {
 				go func() {
 					deadListenerConsumer := listener.DeadListenerConsumer{
 						DeadQueueService: &impl.DeadQueueServiceImpl{},
 					}
-					comsumer := Rabbit{
-						Mqurl: connct,
-					}
-					comsumer.Conn, err = amqp.Dial(connct)
-					checkErr(err, "创建连接失败")
-					comsumer.Channel, err = comsumer.Conn.Channel()
+					ch, err := conn.Channel()
 					checkErr(err, "创建Channel失败")
-					comsumer.Channel.Qos(20, 0, false)
-					go subscribe(comsumer.Channel, utils.NewUUID(), queueName, func(msgs <-chan amqp.Delivery, s string) {
+					ch.Qos(20, 0, false)
+					go subscribe(ch, utils.NewUUID(), queueName, func(msgs <-chan amqp.Delivery, s string) {
 						for msg := range msgs {
-
 							if deadListenerConsumer.Do(msg.Body) == true {
 								msg.Ack(false)
+							} else {
+								msg.Nack(false, true)
 							}
-
 						}
 					})
 				}()
